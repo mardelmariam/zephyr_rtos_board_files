@@ -1,0 +1,26 @@
+identifier: dfrobot_esp32-c5/esp32c5/hpcore
+name: DFRobot ESP32-C5 Firebeetle v2 HP Core
+vendor: espressif
+type: mcu
+arch: riscv
+toolchain:
+  - zephyr
+ram: 384
+supported:
+  - adc
+  - can
+  - gpio
+  - watchdog
+  - uart
+  - dma
+  - pwm
+  - spi
+  - counter
+  - entropy
+  - i2c
+  - i2s
+  - netif:openthread
+  - netif:wifi
+  - crypto
+  - retained_mem
+  - pulse_io

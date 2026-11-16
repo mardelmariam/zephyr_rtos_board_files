@@ -1,0 +1,19 @@
+identifier: dfrobot_esp32-c5/esp32c5/lpcore
+name: DFRobot ESP32-C5 Firebeetle LPCORE
+type: mcu
+arch: riscv
+toolchain:
+  - zephyr
+supported:
+  - cpu
+  - uart
+  - serial
+testing:
+  only_tags:
+    - introduction
+  ignore_tags:
+    - kernel
+    - posix
+    - chre
+    - cpp
+vendor: espressif

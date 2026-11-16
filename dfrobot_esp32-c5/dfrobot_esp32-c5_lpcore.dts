@@ -1,0 +1,32 @@
+/dts-v1/;
+
+#include <espressif/esp32c5/esp32c5_lpcore.dtsi>
+#include "dfrobot_esp32-c5-pinctrl.dtsi"
+#include <espressif/partitions_0x0_default_4M.dtsi>
+
+/ {
+	model = "DFRobot ESP32-C5 Firebeetle LPCORE";
+	compatible = "espressif,esp32c5";
+
+	chosen {
+		zephyr,sram = &ulp_ram;
+		zephyr,console = &usb_serial;
+		zephyr,shell-uart = &usb_serial;
+        	zephyr,flash = &flash0;
+        	zephyr,code-partition = &slot0_lpcore_partition;
+	};
+};
+
+&flash0 {
+	reg = <0x0 DT_SIZE_M(4)>;
+	ranges = <0x0 0x0 DT_SIZE_M(4)>;
+};
+
+&usb_serial {
+	status = "okay";
+};
+
+&uart0_sleep {
+	current-speed = <115200>;
+	status = "okay";
+}

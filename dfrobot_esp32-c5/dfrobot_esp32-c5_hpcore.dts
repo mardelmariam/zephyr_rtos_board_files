@@ -1,0 +1,190 @@
+/*
+
+
+Chip type:          ESP32-C5 (revision v1.0)
+Features:           Wi-Fi 6 (dual-band), BT 5 (LE), IEEE802.15.4, Single Core + LP Core, 240MHz
+Crystal frequency:  48MHz
+USB mode:           USB-Serial/JTAG
+MAC:                3c:dc:75:ff:fe:8e:b0:6c
+BASE MAC:           3c:dc:75:8e:b0:6c
+MAC_EXT:            ff:fe
+
+
+Enabling default SPI flash mode...
+Flash Memory Information:
+=========================
+Manufacturer: 46
+Device: 4016
+Detected flash size: 4MB
+
+
+Security Information:
+=====================
+Flags: 0x00000000 (0b0)
+Key Purposes: (0, 0, 0, 0, 0, 0, 19)
+  BLOCK_KEY0 - USER/EMPTY
+  BLOCK_KEY1 - USER/EMPTY
+  BLOCK_KEY2 - USER/EMPTY
+  BLOCK_KEY3 - USER/EMPTY
+  BLOCK_KEY4 - USER/EMPTY
+  BLOCK_KEY5 - USER/EMPTY
+Chip ID: 23
+API Version: 2
+Secure Boot: Disabled
+Flash Encryption: Disabled
+SPI Boot Crypt Count (SPI_BOOT_CRYPT_CNT): 0x0
+
+
+
+Pins that are available for this ESP32-C5 module
+------------------------------------------------
+GPIO 8,9,10,23,24 - OK
+GPIO 6,7 - Caution. LP I2C
+GPIO 2,3,4,5 - Caution. JTAG usage
+GPIO 25,26,27 - Caution. SPI and strapping
+
+
+Pins that are connected to the integrated Quad-mode SPI flash
+-------------------------------------------------------------
+GPIO 21 - SPICLK
+GPIO 22 - SPID / SIO0
+GPIO 17 - SPIQ / SIO1
+GPIO 20 - SPIHD / SIO3
+GPIO 18 - SPIWP / SIO2
+GPIO 16 - SPICS0
+
+
+Other physical pin settings
+---------------------------
+GPIO 0 - NO. Reserved for power control
+GPIO 1 - NO. Reserved for ADC battery monitoring
+GPIO 11,12 - NO. Reserved for UART0
+GPIO 13,14 - NO. Reserved for USB Serial / JTAG
+GPIO 15 - NO. Connected to on-board LED
+GPIO 15 - Reserved for the optional PSRAM Chip Select interface
+GPIO 19 - Associated with flash power supply
+GPIO 27 - VDD_SPI pin
+
+
+*/
+/dts-v1/;
+
+#include <espressif/esp32c5/esp32c5_common.dtsi>
+#include "dfrobot_esp32-c5-pinctrl.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include "partitions_0x2000_4M.dtsi"
+
+
+/ {
+	model = "DFRobot ESP32-C5 Firebeetle HPCORE";
+	compatible = "espressif,esp32c5";
+
+	aliases {
+		uart-0 = &uart0;
+		i2c-0 = &i2c0;
+		sw0 = &button0;
+		watchdog0 = &wdt0;
+		led0 = &user_led;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 28 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "BOOT Button";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+	chosen {
+        	zephyr,sram = &sramhp;
+		zephyr,console = &usb_serial;
+		zephyr,shell-uart = &usb_serial;
+        	zephyr,flash = &flash0;
+        	zephyr,code-partition = &slot0_partition;
+		zephyr,ieee802154 = &ieee802154;
+    	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		user_led: led_0 {
+		gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>;
+		label = "User LED";
+        };
+    };
+};
+
+&flash0 {
+	reg = <0x0 DT_SIZE_M(4)>;
+	ranges = <0x0 0x0 DT_SIZE_M(4)>;
+};
+
+&psram0 {
+	status = "disabled";
+};
+
+&wdt0 {
+	status = "okay";
+};
+
+&usb_serial {
+	status = "okay";
+};
+
+&uart0 {
+	status = "disabled";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-names = "default";
+};
+
+&trng0 {
+	status = "okay";
+};
+
+&coretemp {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&i2c0 {
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	sda-gpios = <&gpio0 9 GPIO_OPEN_DRAIN>;
+	scl-gpios = <&gpio0 10 GPIO_OPEN_DRAIN>;
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-names = "default";
+};
+
+&i2s {
+	pinctrl-0 = <&i2s_default>;
+	pinctrl-names = "default";
+};
+
+/* SPI2 uses GPIO12-15, which are also the ESP32 JTAG pins.
+ * Disable SPI2 when using those pins for JTAG debugging.
+ */
+&spi2 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "disabled";
+	pinctrl-0 = <&spim2_default>;
+	pinctrl-names = "default";
+};
+
+&ieee802154 {
+	status = "disabled";
+};
+
+&esp32_bt_hci {
+	status = "disabled";
+};
+
+&wifi {
+	status = "disabled";
+};

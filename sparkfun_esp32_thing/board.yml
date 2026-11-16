@@ -1,0 +1,6 @@
+board:
+  name: sparkfun_esp32_thing
+  full_name: Sparkfun ESP32 Thing Board
+  vendor: sparkfun
+  socs:
+  - name: esp32

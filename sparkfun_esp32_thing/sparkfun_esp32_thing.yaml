@@ -1,0 +1,29 @@
+identifier: sparkfun_esp32_thing/esp32/appcpu
+name: Sparkfun ESP32 Thing APPCPU
+type: mcu
+arch: xtensa
+toolchain:
+  - zephyr
+# SRAM1 selected by the board DTS, in KiB; shared between the CPUs.
+ram: 512
+supported:
+  - entropy
+testing:
+  ignore_tags:
+    - net
+    - bluetooth
+    - flash
+    - cpp
+    - posix
+    - watchdog
+    - logging
+    - kernel
+    - pm
+    - gpio
+    - crypto
+    - eeprom
+    - heap
+    - cmsis_rtos
+    - jwt
+    - zdsp
+vendor: espressif

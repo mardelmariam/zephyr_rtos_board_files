@@ -1,0 +1,6 @@
+board:
+  name: esp32_gen_devkit
+  full_name: ESP32 Generic Devkit
+  vendor: other
+  socs:
+  - name: esp32

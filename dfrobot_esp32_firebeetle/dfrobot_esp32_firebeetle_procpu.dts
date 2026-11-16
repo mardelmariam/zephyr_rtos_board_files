@@ -1,0 +1,185 @@
+/*
+
+Chip type:          ESP32-D0WDQ6 (revision v1.0)
+Features:           Wi-Fi, BT, Dual Core + LP Core, 240MHz, Vref calibration in eFuse, Coding Scheme None
+Crystal frequency:  40MHz
+MAC:                b4:e6:2d:8d:6a:35
+
+Stub flasher running.
+
+Flash Memory Information:
+=========================
+Manufacturer: ef
+Device: 4017
+Detected flash size: 8MB
+Flash voltage set by a strapping pin: 3.3V
+
+
+
+Pins that are available for this ESP32 module
+---------------------------------------------
+GPIO 2 - Connected to on-board LED
+GPIO 4 - OK
+GPIO 5, 14, 15 - Outputs PWM signal at boot
+GPIO 12 - Output only. Shouldn't be pulled high
+GPIO 13, 16, 17, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33 - OK
+GPIO 34, 35, 36, 39 - Inputs only
+
+
+Pins that are connected to the integrated Quad-mode SPI flash
+-------------------------------------------------------------
+GPIO 6  - SCK
+GPIO 7  - SDO / SD0
+GPIO 8  - SDI / SD1
+GPIO 9  - SHD / SD2
+GPIO 10 - SWP / SD3
+GPIO 11 - CSC / CMD
+
+
+*/
+/dts-v1/;
+
+#include <espressif/esp32/esp32_wroom_32ue_n8.dtsi>
+#include "dfrobot_esp32_firebeetle-pinctrl.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/input/esp32-touch-sensor-input.h>
+#include <espressif/partitions_0x1000_amp.dtsi>
+
+/ {
+	model = "DFRobot ESP32 Firebeetle PROCPU";
+	compatible = "espressif,esp32";
+
+	aliases {
+		uart-0 = &uart0;
+		i2c-0 = &i2c0;
+		sw0 = &button0;
+		watchdog0 = &wdt0;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 0 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "BOOT Button";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+	chosen {
+        	zephyr,sram = &sram1;
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+        	zephyr,flash = &flash0;
+        	zephyr,code-partition = &slot0_partition;
+		zephyr,bt-hci = &esp32_bt_hci;
+    };
+};
+
+&uart0 {
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-names = "default";
+};
+
+/* UART1's assigned GPIO9 and GPIO10 are connected to the module's SPI flash.
+ * Keep UART1 disabled with these pin assignments.
+ */
+&uart1 {
+	current-speed = <115200>;
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-names = "default";
+};
+
+&uart2 {
+	current-speed = <115200>;
+	pinctrl-0 = <&uart2_default>;
+	pinctrl-names = "default";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&touch {
+	debounce-interval-ms = <30>;
+	href-microvolt = <2700000>;
+	lref-microvolt = <500000>;
+	href-atten-microvolt = <1000000>;
+	filter-mode = <ESP32_TOUCH_FILTER_MODE_IIR_16>;
+	filter-debounce-cnt = <1>;
+	filter-noise-thr = <ESP32_TOUCH_FILTER_NOISE_THR_4_8TH>;
+	filter-jitter-step = <4>;
+	filter-smooth-level = <ESP32_TOUCH_FILTER_SMOOTH_MODE_IIR_2>;
+};
+
+&i2c0 {
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	sda-gpios = <&gpio0 21 GPIO_OPEN_DRAIN>;
+	scl-gpios = <&gpio0 22 GPIO_OPEN_DRAIN>;
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-names = "default";
+};
+
+&i2s0 {
+	pinctrl-0 = <&i2s0_default>;
+	pinctrl-names = "default";
+};
+
+&i2s1 {
+	pinctrl-0 = <&i2s1_default>;
+	pinctrl-names = "default";
+};
+
+/* SPI2 uses GPIO12-15, which are also the ESP32 JTAG pins.
+ * Disable SPI2 when using those pins for JTAG debugging.
+ */
+&spi2 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "disabled";
+	pinctrl-0 = <&spim2_default>;
+	pinctrl-names = "default";
+};
+
+&spi3 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "disabled";
+	pinctrl-0 = <&spim3_default>;
+	pinctrl-names = "default";
+};
+
+&timer0 {
+	status = "disabled";
+};
+
+&timer1 {
+	status = "disabled";
+};
+
+&timer2 {
+	status = "disabled";
+};
+
+&timer3 {
+	status = "disabled";
+};
+
+&trng0 {
+	status = "okay";
+};
+
+&esp32_bt_hci {
+	status = "okay";
+};
+
+&wifi {
+	status = "okay";
+};
